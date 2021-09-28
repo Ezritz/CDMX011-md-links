@@ -23,3 +23,4 @@ mdLinks('./some/dir')
     // [{href, text, file}, ...]
   })
   .catch(console.log(error))
+  

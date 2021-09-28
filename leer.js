@@ -11,6 +11,3 @@ fs.readdir('./', (error, files) => {
     console.log(files);
     
 });
-
-
-

@@ -1,6 +1,4 @@
-// instalamos npm i inquirer
-// npmjs.com/package/inquirer
-// type = list, rawlist(1,2,3), expand (recursivo), checkbox, password,
+#!/usr/bin/env node
 
 const inquirer = require('inquirer');
 inquirer.prompt({
