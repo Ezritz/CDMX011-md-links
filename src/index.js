@@ -24,3 +24,4 @@ mdLinks('./some/dir')
   })
   .catch(console.log(error))
   
+  
