@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
+const inquirer = require('inquirer');
 const path = require('path');
 const directories = require('./prueba');
+const file = require('./file');
+const links = require('./links');
 let options = {validate:false, validate:true};
-
 const mdLinks = (path, options) => {
   
   
   
 }
 
-const inquirer = require('inquirer');
+
 inquirer.prompt([{
   type: 'list',
   name: 'path',
@@ -25,26 +26,25 @@ inquirer.prompt([{
     console.log('File: ' + answers.path);
 
     // read file
-    const regex = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
+    
     // const regex = /\[[\s\S]*?\]\([\s\S]*?\)/g;
     // const regex = /((\w+:\/\/\S+)|(\w+[\.:]\w+\S+))[^\s,\.]/ig
     // const regex = /((\w+:\/\/\w.*)|(\w+[\.:]\w+\S..))[^\s,\.]/ig;
     // const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-    const join = path.join(route, answers.path)
-    fs.readFile(join, 'utf-8', (error, data) => {
-      let resultLinks = data.match(regex);
-      if (error) {
-        console.log(error);
-      } 
-      if (regex.test(data)) {
-        console.log(resultLinks);
-        for (let i = 0; i< resultLinks.length; i++) {
-          
-        }
+    const join = path.join(process.cwd(), answers.path);
+    const resultLinks = file.open(join);
+
+    for (let i = 0; i<resultLinks.length; i++) {
+      
+      if (links.validate(resultLinks[i])) {
+        console.log(resultLinks)
       }
-    });
+      
+    }
+    
   })
   .catch(error => {
     console.log(error);
-  })
-module.exports = mdLinks;
+  });
+
+module.exports.inquirer = inquirer;
