@@ -1,13 +1,13 @@
 const fetch = require('sync-fetch')
 
-function Response(url, status, statusText) {
-  this.url=url;
+function Response(href, status, statusText) {
+  this.href=href;
   this.status=status;
   this.statusText=statusText;
 }
 
 Response.prototype.toString = function responseToString() {
-  return "URL: "+this.url +" status: "+this.status+" statusText: "+this.statusText;
+  return "href: "+this.href +" status: "+this.status+" statusText: "+this.statusText;
 }
 
 const validate = (link) => {

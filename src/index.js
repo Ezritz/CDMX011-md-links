@@ -4,53 +4,65 @@ const file = require('./file');
 const links = require('./links');
 
 const mdLinks = (path, options = {validate: false, stats: false}) => {
-  let files = [];
-  let singlefile = false;
-  if (path.substr(path.length - 1, path.length) != '/') {
-    files.push(path);
-    singlefile= true;
-  } else {
-    try {
-    files = directories.directory(path);
-    }catch(error){
-      process.stderr.write('invalid directory\n');
-      return
-    }
-  }
-  for (const i in files){
-    let fileToOpen = files[i];
-    if (!singlefile){
-      fileToOpen = path+files[i];
-    }
-    let resultLinks;
-    try {
-      resultLinks = file.open(fileToOpen);
-    }catch(error){
-      process.stderr.write('file doesn\'t exist\n');
-      return
-    }
-    
-    if (resultLinks === null) {
-      continue
-    }
-
-    switch(true) {
-    case options.validate && options.stats :
-      break
-    case options.validate:
-      for (let i = 0; i<resultLinks.length; i++) {
-        process.stdout.write(links.validate(resultLinks[i]).toString() + ' file: ' + fileToOpen+'\n');
+  return new Promise((resolve, rejected) => {
+    let files = [];
+    let arrLinks = [];
+    let singlefile = false;
+    if (path.substr(path.length - 1, path.length) != '/') {
+      files.push(path);
+      singlefile= true;
+    } else {
+      try {
+        files = directories.directory(path);
+      }catch(error){
+        rejected(process.stderr.write('invalid directory\n'));
+        return
       }
-      break
-    case options.stats:
-      break
-    default:
-      for (let i = 0; i<resultLinks.length; i++) {
-        process.stdout.write("href: "+resultLinks[i].slice(0, -1) + " file: " + fileToOpen + '\n');
-        // console.log(resultLinks[i].slice(0, -1));
-      } 
     }
-  }
+    for (const i in files){
+      let fileToOpen = files[i];
+      if (!singlefile){
+        fileToOpen = path+files[i];
+      }
+      let resultLinks;
+      try {
+        resultLinks = file.open(fileToOpen);
+      }catch(error){
+        rejected(process.stderr.write('file doesn\'t exist\n'));
+        return
+      }
+      
+      if (resultLinks === null) {
+        continue
+      }
+
+      switch(true) {
+      case options.validate && options.stats :
+        break
+      case options.validate:
+        for (let i = 0; i<resultLinks.length; i++) {
+          let obj = links.validate(resultLinks[i]);
+          let objRes = {
+            href: obj.href,
+            text: obj.statusText,
+            status: obj.status,
+            file: fileToOpen,
+          }
+          arrLinks.push(objRes)
+        }
+        break
+      case options.stats:
+        break
+      default:
+        for (let i = 0; i<resultLinks.length; i++) {
+          process.stdout.write("href: "+resultLinks[i].slice(0, -1) + " file: " + fileToOpen + '\n');
+          // console.log(resultLinks[i].slice(0, -1));
+        } 
+      }
+    }
+    resolve(arrLinks);
+  })
+  
 }
 
 let path = process.cwd();
@@ -70,8 +82,7 @@ for (let i=2; i < process.argv.length; i++){
     path = process.argv[i];
   }
 }
-
-mdLinks(path, options);
+console.log(mdLinks(path, options));
 
 
 // console.log('args: ',args);
