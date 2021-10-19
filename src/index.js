@@ -24,15 +24,15 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       if (!singlefile){
         fileToOpen = path+files[i];
       }
-      let resultLinks;
+      let resultPairs;
       try {
-        resultLinks = file.open(fileToOpen);
+        resultPairs = file.open(fileToOpen);
       }catch(error){
         rejected(process.stderr.write('file doesn\'t exist\n'));
         return
       }
       
-      if (resultLinks === null) {
+      if (resultPairs === null) {
         continue
       }
 
@@ -40,11 +40,13 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       case options.validate && options.stats :
         break
       case options.validate:
-        for (let i = 0; i<resultLinks.length; i++) {
-          let obj = links.validate(resultLinks[i]);
+        for (let i = 0; i<resultPairs.length; i++) {
+          
+          let obj = links.validate(resultPairs[i].link);
           let objRes = {
             href: obj.href,
-            text: obj.statusText,
+            text: resultPairs[i].text,
+            ok: obj.statusText,
             status: obj.status,
             file: fileToOpen,
           }
@@ -54,8 +56,8 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       case options.stats:
         break
       default:
-        for (let i = 0; i<resultLinks.length; i++) {
-          process.stdout.write("href: "+resultLinks[i].slice(0, -1) + " file: " + fileToOpen + '\n');
+        for (let i = 0; i<resultPairs.length; i++) {
+          process.stdout.write("href: "+resultPairs[i].link.slice(0, -1) + " file: " + fileToOpen + '\n');
           // console.log(resultLinks[i].slice(0, -1));
         } 
       }

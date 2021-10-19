@@ -6,14 +6,14 @@ function Response(href, status, statusText) {
   this.statusText=statusText;
 }
 
-Response.prototype.toString = function responseToString() {
-  return "href: "+this.href +" status: "+this.status+" statusText: "+this.statusText;
-}
-
 const validate = (link) => {
-  if (link.substr(link.length -1, link.length) ===')') {
-    link = link.slice(0, -1);
-  }
+  
+  // let linkValidate = [];
+  //link.split(regText);
+  //console.log('holi: ',link);
+  // const result = link.filter(links => links.match(regLink));
+  //let linksRegex = link.match(regLink);
+  //console.log('linksRegex: ', linksRegex);
 
   let response;
   try{
