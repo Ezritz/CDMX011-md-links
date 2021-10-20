@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const chalk = require('chalk');
+// const chalk = require('chalk');
 
 // Recursive function
 const directory = (route, subdir = '') => { // 
@@ -15,7 +15,7 @@ const directory = (route, subdir = '') => { //
     }
     if (item.isDirectory()) {
       // console.log('isDir: ' + route + '/'+item.name);
-      arrFiles = arrFiles.concat(directory(route, subdir  + item.name+ '/'));;
+      arrFiles = arrFiles.concat(directory(route, subdir  + item.name+ '/'));
     } else if (path.extname(item.name) === '.md') {
       // console.log(chalk.yellow('isFile: ')+ chalk.green(item.name));
       arrFiles.push(subdir + item.name);
