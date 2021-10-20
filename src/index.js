@@ -1,56 +1,118 @@
 #!/usr/bin/env node
-
-const inquirer = require('inquirer');
-const path = require('path');
 const directories = require('./prueba');
 const file = require('./file');
 const links = require('./links');
+const stats = require('./stats');
 
-let args = process.argv[2];
+const mdLinks = (path, options = {validate: false, stats: false}) => {
+  return new Promise((resolve, rejected) => {
+    let textStats = [];
+    let files = [];
+    let arrLinks = [];
+    let singlefile = false;
+    if (path.substr(path.length - 1, path.length) != '/') {
+      files.push(path);
+      singlefile= true;
+    } else {
+      try {
+        files = directories.directory(path);
+        console.log('files: ', files);
+      }catch(error){
+        rejected(process.stderr.write('invalid directory\n'));
+        return
+      }
+    }
+    for (const i in files){
+      let fileToOpen = files[i];
+      if (!singlefile){
+        fileToOpen = path+files[i];
+      }
+      let resultPairs;
+      try {
+        console.log('open', fileToOpen);
+        resultPairs = file.open(fileToOpen);
+      }catch(error){
+        rejected(process.stderr.write('file doesn\'t exist\n'));
+        return
+      }
+      
+      if (resultPairs === null) {
+        continue
+      }
 
-// console.log('args: ',args);
-
-
-const mdLinks = (path, options) => {
-  
-  
-  
+      switch(true) {
+      case options.validate && options.stats :
+        for (let i = 0; i<resultPairs.length; i++) {
+          let obj = links.validate(resultPairs[i].link);
+          let objRes = {
+            href: obj.href,
+            text: resultPairs[i].text,
+            ok: obj.statusText,
+            status: obj.status,
+            file: fileToOpen,
+          }
+          arrLinks.push(objRes);
+        }
+        let objStatsBroken = stats.countWithBroken(arrLinks);
+        resolve(objStatsBroken);
+        break
+      case options.validate:
+        for (let i = 0; i<resultPairs.length; i++) {
+          let obj = links.validate(resultPairs[i].link);
+          let objRes = {
+            href: obj.href,
+            text: resultPairs[i].text,
+            ok: obj.statusText,
+            status: obj.status,
+            file: fileToOpen,
+          }
+          arrLinks.push(objRes);
+        }
+        resolve(arrLinks);
+        break
+      case options.stats:
+        let statsLink = stats.count(resultPairs);
+        resolve(statsLink);
+        break
+      default:
+        for (let i = 0; i<resultPairs.length; i++) {
+          let objDef = {
+            href: resultPairs[i].link,
+            text: resultPairs[i].text,
+            file: fileToOpen,
+          }
+          arrLinks.push(objDef);
+          // process.stdout.write("href: "+resultPairs[i].link.slice(0, -1) + " file: " + fileToOpen + '\n');
+          // console.log(resultLinks[i].slice(0, -1));
+        } 
+        resolve(arrLinks);
+      }
+    }
+    
+  })
   
 }
 
-inquirer.prompt([{
-  type: 'list',
-  name: 'path',
-  itemType: 'any',
-  message: 'Select a File to analyze links',
-  suggestOnly: true,
-  default: 'README.md',
-  choices: directories.directory(process.cwd()),
-}])
-  .then(answers => {
-    console.log('File: ' + answers.path);
+let path = process.cwd();
+let options = {
+  validate: false,
+  stats: false,
+}
+for (let i=2; i < process.argv.length; i++){
+  switch (process.argv[i]) {
+  case '--validate':
+    options.validate = true;
+    break;
+  case '--stats':
+    options.stats = true;
+    break;
+  default:
+    path = process.argv[i];
+  }
+}
+console.log(mdLinks(path, options));
 
-    // read file
-    
-    // const regex = /\[[\s\S]*?\]\([\s\S]*?\)/g;
-    // const regex = /((\w+:\/\/\S+)|(\w+[\.:]\w+\S+))[^\s,\.]/ig
-    // const regex = /((\w+:\/\/\w.*)|(\w+[\.:]\w+\S..))[^\s,\.]/ig;
-    // const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
-    
-    const join = path.join(process.cwd(), answers.path);
-    const resultLinks = file.open(join);
 
-    for (let i = 0; i<resultLinks.length; i++) {
-    
-      if (links.validate(resultLinks[i])) {
-        console.log(resultLinks)
-      }
-    
-    }
-     
-  })
-  .catch(error => {
-    console.log(error);
-  });
+// console.log('args: ',args);
 
 module.exports.mdLinks = mdLinks;
