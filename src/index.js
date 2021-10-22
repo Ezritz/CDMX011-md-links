@@ -3,10 +3,37 @@ const directories = require('./prueba');
 const file = require('./file');
 const links = require('./links');
 const stats = require('./stats');
+const chalk = require('chalk');
 
+function objValidate(href, text, status, file) {
+  this.href = href;
+  this.text = text;
+  this.status = status;
+  this.file = file;
+}
+objValidate.prototype.toString = function toString() {
+  if(this.ok === undefined && this.status === undefined) {
+    return this.file + ' '+chalk.cyan(this.href) + ' ' + chalk.green(this.text) + '\n';
+  } else if(this.status >= 400){
+    return this.file + ' '+chalk.cyan(this.href)+ ' ' + 'fail ' + chalk.red(this.status) + ' ' + chalk.green(this.text) + '\n';
+  } else {
+    return this.file+ ' ' +chalk.cyan(this.href)+ ' '  + 'ok ' + chalk.yellow(this.status) + ' ' + chalk.green(this.text)+ '\n';
+  }
+}
+
+function arrObjValidate(array) {
+  this.array = array;
+}
+arrObjValidate.prototype.toString = function toString() {
+  let str = '';
+  for(let i = 0; i< this.array.length; i++) {
+    str += this.array[i].toString();
+  }
+  return str;
+}
 const mdLinks = (path, options = {validate: false, stats: false}) => {
   return new Promise((resolve, rejected) => {
-    let textStats = [];
+    
     let files = [];
     let arrLinks = [];
     let singlefile = false;
@@ -44,13 +71,7 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       case options.validate && options.stats :
         for (let i = 0; i<resultPairs.length; i++) {
           let obj = links.validate(resultPairs[i].link);
-          let objRes = {
-            href: obj.href,
-            text: resultPairs[i].text,
-            ok: obj.statusText,
-            status: obj.status,
-            file: fileToOpen,
-          }
+          let objRes = new objValidate(obj.href,resultPairs[i].text,obj.status,fileToOpen);
           arrLinks.push(objRes);
         }
         let objStatsBroken = stats.countWithBroken(arrLinks);
@@ -59,16 +80,11 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       case options.validate:
         for (let i = 0; i<resultPairs.length; i++) {
           let obj = links.validate(resultPairs[i].link);
-          let objRes = {
-            href: obj.href,
-            text: resultPairs[i].text,
-            ok: obj.statusText,
-            status: obj.status,
-            file: fileToOpen,
-          }
+          let objRes = new objValidate(obj.href,resultPairs[i].text,obj.status,fileToOpen);
+            
           arrLinks.push(objRes);
         }
-        resolve(arrLinks);
+        resolve(new arrObjValidate(arrLinks));
         break
       case options.stats:
         let statsLink = stats.count(resultPairs);
@@ -110,7 +126,13 @@ for (let i=2; i < process.argv.length; i++){
     path = process.argv[i];
   }
 }
-console.log(mdLinks(path, options));
+mdLinks(path, options)
+  .then((response) => {
+    console.log(response.toString());
+  })
+  .catch((error) => {
+    console.log('Use a route <path-to-file> [options]'), error;
+  })
 
 
 // console.log('args: ',args);

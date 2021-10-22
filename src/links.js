@@ -18,9 +18,12 @@ const validate = (link) => {
   let response;
   try{
     let resp = fetch(link);
+    if(resp.statusText !== 'ok'){
+      resp.statusText === 'fail';
+    }
     response = new Response(resp.url, resp.status, resp.statusText);
   } catch (error) {
-    response = new Response(link, 500, 'invalid URL');
+    response = new Response(link, 500, 'fail');
   }
   return response;
 }
