@@ -14,7 +14,6 @@ const validate = (link) => {
   // const result = link.filter(links => links.match(regLink));
   //let linksRegex = link.match(regLink);
   //console.log('linksRegex: ', linksRegex);
-
   let response;
   try{
     let resp = fetch(link);

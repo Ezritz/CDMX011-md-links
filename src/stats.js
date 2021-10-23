@@ -6,10 +6,11 @@ const count = (pairs) => {
   let uniqueLinks = [];
   let arrStats = [];
   
+  
   uniqueLinks = pairs.map((item) => {
     return item.link;
   })
-
+  
   // console.log('unique', uniqueLinks.length);
   // console.log('arrStats: ', arrStats)
   let objStats;
@@ -33,9 +34,9 @@ statsLinks.prototype.toString = function toString() {
 
 const countWithBroken = (linksValidation) => {
   let brokenLinks = [];
-  for (let i = 0; i<linksValidation.length; i++) {
-    if (linksValidation[i].status >= 404) {
-      brokenLinks.push(linksValidation[i].status);
+  for (let link of linksValidation) {
+    if (link.status >= 400) {
+      brokenLinks.push(link.status);
     }
   }
   let objResult;

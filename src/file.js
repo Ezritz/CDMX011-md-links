@@ -21,6 +21,7 @@ const open = (route) => {
       arrNewLinks.push({
         text: text,
         link: link,
+        file: route,
       });
     }
   }
