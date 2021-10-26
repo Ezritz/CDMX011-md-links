@@ -4,7 +4,7 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage --watch"
   },
   "bin": {
     "md-links": "./src/index.js"
@@ -15,5 +15,8 @@
     "inquirer-fuzzy-path": "^2.3.0",
     "node-fetch": "^3.0.0",
     "sync-fetch": "^0.3.1"
+  },
+  "devDependencies": {
+    "jest": "^27.3.1"
   }
 }
