@@ -31,4 +31,3 @@ const open = (route) => {
 }
 
 module.exports.open = open;
-

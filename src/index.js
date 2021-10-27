@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const directories = require('./prueba');
+const find = require('./find');
 const file = require('./file');
 const links = require('./links');
 const stats = require('./stats');
@@ -31,7 +31,9 @@ arrObjValidate.prototype.toString = function toString() {
   }
   return str;
 }
+
 const mdLinks = (path, options = {validate: false, stats: false}) => {
+  console.log('mdLinks' );
   return new Promise((resolve, rejected) => {
     
     let files = [];
@@ -42,7 +44,7 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       singlefile= true;
     } else {
       try {
-        files = directories.directory(path);
+        files = find.directory(path);
         console.log('files: ', files);
       }catch(error){
         rejected(process.stderr.write('invalid directory\n'));
@@ -61,6 +63,7 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
         resultPairs = resultPairs.concat(file.open(fileToOpen));
         // console.log('concat ', resultPairs);
       }catch(error){
+        // console.log(error);
       }
       
       if (resultPairs === null) {
@@ -80,12 +83,12 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       resolve(objStatsBroken);
       break
     case options.validate:
-      console.log('entro validate');
+      // console.log('entro validate');
       for (let i = 0; i<resultPairs.length; i++) {
         let obj = links.validate(resultPairs[i].link);
-        console.log('obj' , obj)
+        // console.log('obj' , obj)
         let objRes = new objValidate(obj.href,resultPairs[i].text,obj.status,resultPairs[i].file);
-        console.log('validate', objRes);
+        // console.log('validate', objRes);
         arrLinks.push(objRes);
       }
       resolve(new arrObjValidate(arrLinks));
@@ -95,9 +98,11 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       resolve(statsLink);
       break
     default:
+    // console.log('resultPairs', resultPairs)
       for (let i = 0; i<resultPairs.length; i++) {
         let objDef = new objValidate(resultPairs[i].link,resultPairs[i].text,'',resultPairs[i].file)
         arrLinks.push(objDef);
+        // console.log('arrLinks ', arrLinks);
         // process.stdout.write("href: "+resultPairs[i].link.slice(0, -1) + " file: " + fileToOpen + '\n');
         // console.log(resultLinks[i].slice(0, -1));
       } 
@@ -136,3 +141,5 @@ mdLinks(path, options)
 // console.log('args: ',args);
 
 module.exports.mdLinks = mdLinks;
+module.exports.arrObjValidate = arrObjValidate;
+module.exports.objValidate = objValidate;

@@ -52,4 +52,5 @@ const countWithBroken = (linksValidation) => {
 }
 
 module.exports.count = count;
+module.exports.statsLinks = statsLinks;
 module.exports.countWithBroken = countWithBroken;

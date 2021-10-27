@@ -28,3 +28,4 @@ const validate = (link) => {
 }
 
 module.exports.validate = validate;
+module.exports.Response = Response;
