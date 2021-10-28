@@ -1,7 +1,7 @@
-const stats = require('../src/stats');
+const stats = require('../src/stats.js');
 const chalk = require('chalk');
-const index = require('../src/index');
-const links = require('../src/links');
+const index = require('../src/index.js');
+const links = require('../src/links.js');
 const expectedLinks = [
   {
     text: 'Google',
@@ -40,10 +40,23 @@ let statDefaultBrokenString = '\nTotal: '+chalk.yellow(4)+'\nUnique: '+chalk.yel
 
 const mdLinksObjectValidate = new index.arrObjValidate(expectedLinksWithStatus);
 
-let validateString = [
-new links.Response('www.google.com','Google','500', './test/mock.md')
+const expectedLinksToValidate = [
+  new index.objValidate('www.google.com','Google',500, './test/mock.md'),
+  new index.objValidate('https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex','stackoverflow',200, './test/mock.md'),
+  new index.objValidate('https://nodejs.org/en/','Node',200, './test/mock.md'),
+  new index.objValidate('https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday','Mock Fetch',200, './test/mock.md'),
 ];
 
+const  mdLinksOptionValidate = new index.arrObjValidate(expectedLinksToValidate);
+let mdLinksOptionValidateString = './test/mock.md '+ chalk.cyan('www.google.com')+' '+ 'fail '+ chalk.red(500) +' '+  chalk.green('Google')+ '\n'+
+'./test/mock.md ' + chalk.cyan('https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex') + ' '+ 'ok '+ chalk.yellow(200)+ ' '+ chalk.green('stackoverflow')+'\n'+
+'./test/mock.md ' + chalk.cyan('https://nodejs.org/en/') +' '+ 'ok '+chalk.yellow(200) + ' '+ chalk.green('Node')+'\n'+
+'./test/mock.md ' + chalk.cyan('https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday') + ' '+'ok '+ chalk.yellow(200) +' '+  chalk.green('Mock Fetch')+'\n';
+
+let mdLinksNoOptionString = './test/mock.md '+ chalk.cyan('www.google.com')+' '+ chalk.green('Google')+ '\n'+
+'./test/mock.md ' + chalk.cyan('https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex') + ' '+ chalk.green('stackoverflow')+'\n'+
+'./test/mock.md ' + chalk.cyan('https://nodejs.org/en/') +' '+ chalk.green('Node')+'\n'+
+'./test/mock.md ' + chalk.cyan('https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday') + ' '+ chalk.green('Mock Fetch')+'\n';
 let expectedLinksValidated = [
   {
     text: 'Google',
@@ -82,5 +95,8 @@ module.exports = {
   statDefaultBrokenString,
   mdLinksObjectValidate,
   expectedLinksWithStatus,
+  mdLinksOptionValidate,
+  mdLinksOptionValidateString,
+  mdLinksNoOptionString,
 }
 

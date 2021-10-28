@@ -1,9 +1,12 @@
 /* eslint-env jest */
-const {mdLinks} = require('../src/index');
-const find = require('../src/find');
-const links = require('../src/links');
-const stat = require('../src/stats');
-const file = require('../src/file');
+jest.mock('sync-fetch');
+const fetch = require('sync-fetch');
+
+const {mdLinks} = require('../src/index.js');
+const find = require('../src/find.js');
+const links = require('../src/links.js');
+const stat = require('../src/stats.js');
+const file = require('../src/file.js');
 const {
   expectedLinks,
   mdFiles, 
@@ -13,9 +16,10 @@ const {
   statDefaultBroken,
   statDefaultBrokenString,
   mdLinksObjectValidate,
+  mdLinksOptionValidate,
+  mdLinksOptionValidateString,
+  mdLinksNoOptionString,
 } = require('../test/mockData');
-const fetch = require('sync-fetch');
-jest.mock('sync-fetch');
 
 describe('mdLinks', () => {
   it('default mdLinks', () => {
@@ -23,13 +27,35 @@ describe('mdLinks', () => {
     return expect(mdLinks('./test/mock.md', {validate:false,stats:false})).
       resolves.toStrictEqual(mdLinksObjectValidate);
   });
-  /*
-  it('validate mdLinks', () => {
+  it('should not resolved with error path', () => {
     expect.assertions(1);
-    return expect(mdLinks('./test/mock.md', {validate:true,stats:false})).
-      resolves.toStrictEqual(mdLinksObjectValidate);
+    return expect(mdLinks('./test/mock.md/', {validate:false,stats:false})).
+      rejects.toEqual(true);
   });
-*/
+  it('valid Links with fetch', () => {
+    
+    fetch.mockReturnValueOnce({url: 'www.google.com', status: 500, statusText: 'fail'})
+      .mockReturnValueOnce({url: 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex', status: 200, statusText: 'ok'})
+      .mockReturnValueOnce({url: 'https://nodejs.org/en/', status: 200, statusText: 'ok'})
+      .mockReturnValueOnce({url: 'https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday', status: 200, statusText: 'ok'});
+    const result = mdLinks('./test/mock.md', {validate:true,stats:false});
+   
+    // expect(fetch).toHaveBeenCalledTimes(4);
+    expect(fetch).toHaveBeenNthCalledWith(1, 'www.google.com');
+    expect(fetch).toHaveBeenNthCalledWith(2, 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex');
+    expect(fetch).toHaveBeenNthCalledWith(3, 'https://nodejs.org/en/');
+    expect(fetch).toHaveBeenNthCalledWith(4, 'https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday');
+
+    expect.assertions(5);
+    return expect(result).resolves.toStrictEqual(mdLinksOptionValidate);
+  });
+  it('expected array to object mdLinks to String', () => {
+    expect(mdLinksObjectValidate.toString()).toEqual(mdLinksNoOptionString);
+  })
+  it('expected array to object validate to String', () => {
+    expect(mdLinksOptionValidate.toString()).toEqual(mdLinksOptionValidateString);
+  })
+  
 });
 
 describe('directory', () => {

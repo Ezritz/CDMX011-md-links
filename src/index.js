@@ -45,7 +45,7 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
     } else {
       try {
         files = find.directory(path);
-        console.log('files: ', files);
+        // console.log('files: ', files);
       }catch(error){
         rejected(process.stderr.write('invalid directory\n'));
         return
@@ -83,16 +83,20 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       resolve(objStatsBroken);
       break
     case options.validate:
-      // console.log('entro validate');
+       console.log('entro validate');
       for (let i = 0; i<resultPairs.length; i++) {
+        console.log('resultPairs[i].link: ',resultPairs[i].link);
         let obj = links.validate(resultPairs[i].link);
+        console.log('robj: ',obj);
         // console.log('obj' , obj)
         let objRes = new objValidate(obj.href,resultPairs[i].text,obj.status,resultPairs[i].file);
-        // console.log('validate', objRes);
+        console.log('validate', objRes);
         arrLinks.push(objRes);
       }
+      console.log(arrLinks);
       resolve(new arrObjValidate(arrLinks));
       break
+
     case options.stats:
       let statsLink = stats.count(resultPairs);
       resolve(statsLink);

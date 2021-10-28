@@ -17,6 +17,7 @@ const validate = (link) => {
   let response;
   try{
     let resp = fetch(link);
+    console.log('resp: ', resp);
     if(resp.statusText !== 'ok'){
       resp.statusText === 'fail';
     }
