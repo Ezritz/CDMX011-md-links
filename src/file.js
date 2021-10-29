@@ -21,6 +21,7 @@ const open = (route) => {
       arrNewLinks.push({
         text: text,
         link: link,
+        file: route,
       });
     }
   }
@@ -30,4 +31,3 @@ const open = (route) => {
 }
 
 module.exports.open = open;
-
