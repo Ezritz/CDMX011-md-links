@@ -31,7 +31,12 @@ const expectedLinksWithStatus = [
   new index.objValidate('https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday','Mock Fetch','', './test/mock.md'),
   
 ];
+const expectedLinksOneMd = [
+  new index.objValidate('https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Object/toString','google', '', './test/module/carpeta.md/md.md')
+];
+
 let mdFiles = ['README.md','test/mock.md','test/module/carpeta.md/md.md','test/module/prueba.md', 'test/module/prueba2.md'];
+
 
 let statDefault = new stats.statsLinks(4,4);
 let statDefaultString = '\nTotal: '+chalk.yellow(4)+'\nUnique: '+chalk.yellow(4)+'\n';
@@ -39,6 +44,7 @@ let statDefaultBroken = new stats.statsLinks(4,4,1);
 let statDefaultBrokenString = '\nTotal: '+chalk.yellow(4)+'\nUnique: '+chalk.yellow(4)+'\n'+chalk.redBright('Broken: 1')+'\n';
 
 const mdLinksObjectValidate = new index.arrObjValidate(expectedLinksWithStatus);
+const mdLinksObjectNoFile = new index.arrObjValidate(expectedLinksOneMd);
 
 const expectedLinksToValidate = [
   new index.objValidate('www.google.com','Google',500, './test/mock.md'),
@@ -98,5 +104,7 @@ module.exports = {
   mdLinksOptionValidate,
   mdLinksOptionValidateString,
   mdLinksNoOptionString,
+  mdLinksObjectNoFile,
+ 
 }
 

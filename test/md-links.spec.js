@@ -19,7 +19,9 @@ const {
   mdLinksOptionValidate,
   mdLinksOptionValidateString,
   mdLinksNoOptionString,
-} = require('../test/mockData');
+  mdLinksObjectNoFile,
+ 
+} = require('../test/mockData.js');
 
 describe('mdLinks', () => {
   it('default mdLinks', () => {
@@ -27,13 +29,18 @@ describe('mdLinks', () => {
     return expect(mdLinks('./test/mock.md', {validate:false,stats:false})).
       resolves.toStrictEqual(mdLinksObjectValidate);
   });
+  it('find md files one directory', () => {
+    expect.assertions(1);
+    return expect(mdLinks('./test/module/carpeta.md/', {validate:false,stats:false})).
+      resolves.toStrictEqual(mdLinksObjectNoFile);
+  });
   it('should not resolved with error path', () => {
     expect.assertions(1);
     return expect(mdLinks('./test/mock.md/', {validate:false,stats:false})).
       rejects.toEqual(true);
   });
+  
   it('valid Links with fetch', () => {
-    
     fetch.mockReturnValueOnce({url: 'www.google.com', status: 500, statusText: 'fail'})
       .mockReturnValueOnce({url: 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex', status: 200, statusText: 'ok'})
       .mockReturnValueOnce({url: 'https://nodejs.org/en/', status: 200, statusText: 'ok'})
@@ -49,6 +56,22 @@ describe('mdLinks', () => {
     expect.assertions(5);
     return expect(result).resolves.toStrictEqual(mdLinksOptionValidate);
   });
+  it('Send stats with fetch', () => {
+    fetch.mockReturnValueOnce({url: 'www.google.com', status: 500, statusText: 'fail'})
+      .mockReturnValueOnce({url: 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex', status: 200, statusText: 'ok'})
+      .mockReturnValueOnce({url: 'https://nodejs.org/en/', status: 200, statusText: 'ok'})
+      .mockReturnValueOnce({url: 'https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday', status: 200, statusText: 'ok'});
+    const result = mdLinks('./test/mock.md', {validate:true,stats:true});
+   
+    // expect(fetch).toHaveBeenCalledTimes(4);
+    expect(fetch).toHaveBeenNthCalledWith(1, 'www.google.com');
+    expect(fetch).toHaveBeenNthCalledWith(2, 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex');
+    expect(fetch).toHaveBeenNthCalledWith(3, 'https://nodejs.org/en/');
+    expect(fetch).toHaveBeenNthCalledWith(4, 'https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday');
+
+    expect.assertions(5);
+    return expect(result).resolves.toStrictEqual(statDefaultBroken);
+  });
   it('expected array to object mdLinks to String', () => {
     expect(mdLinksObjectValidate.toString()).toEqual(mdLinksNoOptionString);
   })
@@ -62,13 +85,13 @@ describe('directory', () => {
   it('find md files', () => {
     expect(find.directory('./')).toStrictEqual(mdFiles);
   })
-})
+});
 
 describe('open files', () => {
   it('read files md', () => {
     expect(file.open('./test/mock.md')).toStrictEqual(expectedLinks);
   })
-})
+});
 
 describe('stats to md', () => {
   it('show total and unique links', () => {

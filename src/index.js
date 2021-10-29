@@ -56,19 +56,22 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       let fileToOpen = files[i];
       if (!singlefile){
         fileToOpen = path+files[i];
+        // console.log('fileopen',fileToOpen);
       }
       
       try {
         console.log('open', fileToOpen);
         resultPairs = resultPairs.concat(file.open(fileToOpen));
-        // console.log('concat ', resultPairs);
+        console.log('concat ', resultPairs);
       }catch(error){
         // console.log(error);
       }
-      
+      /*
       if (resultPairs === null) {
+        console.log('no hay contenido')
         continue
       }
+      */
     }
     
     switch(true) {
