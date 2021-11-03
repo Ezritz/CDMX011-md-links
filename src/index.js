@@ -32,7 +32,7 @@ arrObjValidate.prototype.toString = function toString() {
   return str;
 }
 
-const mdLinks = (path, options = {validate: false, stats: false}) => {
+const mdLinks = (path, options ={validate: false, stats: false}) => {
   console.log('mdLinks' );
   return new Promise((resolve, rejected) => {
     
@@ -125,7 +125,7 @@ let options = {
   stats: false,
   path: process.cwd(),
 }
-console.log('antes',process.argv,options);
+// console.log('antes',process.argv,options);
 const cli = (processArgv,options) => {
   for (let i=2; i < processArgv.length; i++){
     switch (processArgv[i]) {
@@ -144,18 +144,18 @@ const cli = (processArgv,options) => {
 };
 
 cli(process.argv,options);
-console.log('despues', process.argv, options)
+// console.log('despues', process.argv, options)
 mdLinks(options.path, options)
   .then((response) => {
     console.log(response.toString());
     return Promise.reject()
   })
   .catch((error) => {
-    console.log('use command md-links')
+    console.log('Use command "md-links <path-to-file> [options]')
     console.log('Use a route <path-to-file> [options]'), error;
-    console.log('ej md-links <path-to-file>[--validate] (to obtain status links)')
-    console.log('ej md-links <path-to-file>[--stats](to obtain stats about links)')
-    console.log('ej md-links <path-to-file>[--stats --validate|| --validate --stats](to obtain stats with total broken links)')
+    console.log('ej "md-links <path-to-file> --validate to obtain status links')
+    console.log('ej md-links <path-to-file> --stats to obtain stats about links')
+    console.log('ej md-links <path-to-file> --stats --validate or --validate --stats to obtain stats with total broken links')
   })
 // console.log('args: ',args);
 

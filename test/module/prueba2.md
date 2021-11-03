@@ -1,1 +1,1 @@
-[google]('www.google.com)
+[google](www.google.com)
