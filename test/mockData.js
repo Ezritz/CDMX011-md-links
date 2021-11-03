@@ -53,7 +53,7 @@ const expectedLinksToValidate = [
   new index.objValidate('https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday','Mock Fetch',200, './test/mock.md'),
 ];
 const expectedLinkFail = [
-  new index.objValidate('www.google.com',500, 'fail')
+  new index.objValidate('www.google.com','google',500, './test/module/prueba2.md')
 ]
 const mdLinksObjectValidateFail = new index.arrObjValidate(expectedLinkFail);
 const  mdLinksOptionValidate = new index.arrObjValidate(expectedLinksToValidate);

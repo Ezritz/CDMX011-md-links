@@ -23,13 +23,20 @@ const {
   mdLinksObjectValidateFail,
   cliResultValidate,
   cliResultStats,
-  cliResultDefault,
+  
 } = require('../test/mockData.js');
+
+
 
 describe('mdLinks', () => {
   it('default mdLinks', () => {
     expect.assertions(1);
     return expect(mdLinks('./test/mock.md', {validate:false,stats:false})).
+      resolves.toStrictEqual(mdLinksObjectValidate);
+  });
+  it('default mdLinks without options', () => {
+    expect.assertions(1);
+    return expect(mdLinks('./test/mock.md')).
       resolves.toStrictEqual(mdLinksObjectValidate);
   });
   it('find md files one directory', () => {
@@ -44,6 +51,7 @@ describe('mdLinks', () => {
   });
   
   it('valid Links with fetch', () => {
+    fetch.mockReset();
     fetch.mockReturnValueOnce({url: 'www.google.com', status: 500, statusText: 'fail'})
       .mockReturnValueOnce({url: 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex', status: 200, statusText: 'ok'})
       .mockReturnValueOnce({url: 'https://nodejs.org/en/', status: 200, statusText: 'ok'})
@@ -59,20 +67,20 @@ describe('mdLinks', () => {
     expect.assertions(5);
     return expect(result).resolves.toStrictEqual(mdLinksOptionValidate);
   });
-  /*
+  
   it('invlid Links with fetch', () => {
-    fetch.mockReturnValueOnce('www.google.com', 500, 'fail')
+    fetch.mockReset();
+    fetch.mockReturnValue();
       
     const result = mdLinks('./test/module/prueba2.md', {validate:true,stats:false});
    
-    // expect(fetch).toHaveBeenCalledTimes(4);
-    expect(fetch).toHaveBeenNthCalledWith(1,'www.google.com');
-
+    expect(fetch).toHaveBeenCalledTimes(1);
     expect.assertions(2);
     return expect(result).resolves.toStrictEqual(mdLinksObjectValidateFail);
   });
-  */
+  
   it('Send stats with fetch', () => {
+    fetch.mockReset();
     fetch.mockReturnValueOnce({url: 'www.google.com', status: 500, statusText: 'fail'})
       .mockReturnValueOnce({url: 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex', status: 200, statusText: 'ok'})
       .mockReturnValueOnce({url: 'https://nodejs.org/en/', status: 200, statusText: 'ok'})
@@ -102,16 +110,19 @@ describe('mdLinks', () => {
 });
 
 describe('cli', () => {
-  it('expected object for option --validate', () => {
-    expect(cli(['/usr/local/bin/node', '/usr/local/bin/md-links','./test/mock.md','--validate'],{validate:false,stats:false, path: '/Users/edith/Desktop/bc-laboratoria/CDMX011-md-links'})).toStrictEqual(cliResultValidate);
-  })
-
   it('expected object for option --stats', () => {
-    expect(cli(['/usr/local/bin/node', '/usr/local/bin/md-links','./test/mock.md','--stats'], {validate:false,stats:false, path: '/Users/edith/Desktop/bc-laboratoria/CDMX011-md-links'})).toStrictEqual(cliResultStats);
-  })
+    expect(cli(['/usr/local/bin/node', '/usr/local/bin/md-links','./test/mock.md','--stats'], 
+      {validate:false,stats:false, path: '/Users/edith/Desktop/bc-laboratoria/CDMX011-md-links'}))
+    .toStrictEqual(cliResultStats);
+  });
   
+  it('expected object for option --validate', () => {
+    expect(cli(['/usr/local/bin/node', '/usr/local/bin/md-links','./test/mock.md','--validate'],
+      {validate:false,stats:false, path: '/Users/edith/Desktop/bc-laboratoria/CDMX011-md-links'}))
+    .toStrictEqual(cliResultValidate);
+  });
   
-})
+});
 
 describe('directory', () => {
   it('find md files', () => {
