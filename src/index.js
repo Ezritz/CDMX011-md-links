@@ -62,7 +62,7 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       try {
         console.log('open', fileToOpen);
         resultPairs = resultPairs.concat(file.open(fileToOpen));
-        console.log('concat ', resultPairs);
+        // console.log('concat ', resultPairs);
       }catch(error){
         // console.log(error);
       }
@@ -90,7 +90,7 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
       for (let i = 0; i<resultPairs.length; i++) {
         console.log('resultPairs[i].link: ',resultPairs[i].link);
         let obj = links.validate(resultPairs[i].link);
-        console.log('robj: ',obj);
+        // console.log('robj: ',obj);
         // console.log('obj' , obj)
         let objRes = new objValidate(obj.href,resultPairs[i].text,obj.status,resultPairs[i].file);
         console.log('validate', objRes);
@@ -119,34 +119,47 @@ const mdLinks = (path, options = {validate: false, stats: false}) => {
   })
 }
 
-let path = process.cwd();
+
 let options = {
   validate: false,
   stats: false,
+  path: process.cwd(),
 }
-for (let i=2; i < process.argv.length; i++){
-  switch (process.argv[i]) {
-  case '--validate':
-    options.validate = true;
-    break;
-  case '--stats':
-    options.stats = true;
-    break;
-  default:
-    path = process.argv[i];
+console.log('antes',process.argv,options);
+const cli = (processArgv,options) => {
+  for (let i=2; i < processArgv.length; i++){
+    switch (processArgv[i]) {
+    case '--validate':
+      options.validate = true;
+      break;
+    case '--stats':
+      options.stats = true;
+      break;
+    default:
+      options.path = processArgv[i];
+     
+    }
   }
-}
-mdLinks(path, options)
+  return processArgv, options;
+};
+
+cli(process.argv,options);
+console.log('despues', process.argv, options)
+mdLinks(options.path, options)
   .then((response) => {
     console.log(response.toString());
+    return Promise.reject()
   })
   .catch((error) => {
+    console.log('use command md-links')
     console.log('Use a route <path-to-file> [options]'), error;
+    console.log('ej md-links <path-to-file>[--validate] (to obtain status links)')
+    console.log('ej md-links <path-to-file>[--stats](to obtain stats about links)')
+    console.log('ej md-links <path-to-file>[--stats --validate|| --validate --stats](to obtain stats with total broken links)')
   })
-
-
 // console.log('args: ',args);
 
 module.exports.mdLinks = mdLinks;
+module.exports.cli = cli;
 module.exports.arrObjValidate = arrObjValidate;
 module.exports.objValidate = objValidate;

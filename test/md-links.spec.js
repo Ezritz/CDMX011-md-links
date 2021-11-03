@@ -2,7 +2,7 @@
 jest.mock('sync-fetch');
 const fetch = require('sync-fetch');
 
-const {mdLinks} = require('../src/index.js');
+const {mdLinks, cli} = require('../src/index.js');
 const find = require('../src/find.js');
 const links = require('../src/links.js');
 const stat = require('../src/stats.js');
@@ -20,7 +20,10 @@ const {
   mdLinksOptionValidateString,
   mdLinksNoOptionString,
   mdLinksObjectNoFile,
- 
+  mdLinksObjectValidateFail,
+  cliResultValidate,
+  cliResultStats,
+  cliResultDefault,
 } = require('../test/mockData.js');
 
 describe('mdLinks', () => {
@@ -52,10 +55,23 @@ describe('mdLinks', () => {
     expect(fetch).toHaveBeenNthCalledWith(2, 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex');
     expect(fetch).toHaveBeenNthCalledWith(3, 'https://nodejs.org/en/');
     expect(fetch).toHaveBeenNthCalledWith(4, 'https://www.youtube.com/watch?v=mHXhuPHiDj8&ab_channel=LeighHalliday');
-
+    
     expect.assertions(5);
     return expect(result).resolves.toStrictEqual(mdLinksOptionValidate);
   });
+  /*
+  it('invlid Links with fetch', () => {
+    fetch.mockReturnValueOnce('www.google.com', 500, 'fail')
+      
+    const result = mdLinks('./test/module/prueba2.md', {validate:true,stats:false});
+   
+    // expect(fetch).toHaveBeenCalledTimes(4);
+    expect(fetch).toHaveBeenNthCalledWith(1,'www.google.com');
+
+    expect.assertions(2);
+    return expect(result).resolves.toStrictEqual(mdLinksObjectValidateFail);
+  });
+  */
   it('Send stats with fetch', () => {
     fetch.mockReturnValueOnce({url: 'www.google.com', status: 500, statusText: 'fail'})
       .mockReturnValueOnce({url: 'https://stackoverflow.com/questions/43892252/how-do-i-restrict-my-last-character-using-regex', status: 200, statusText: 'ok'})
@@ -72,14 +88,30 @@ describe('mdLinks', () => {
     expect.assertions(5);
     return expect(result).resolves.toStrictEqual(statDefaultBroken);
   });
+  it('expected only stats', () => {
+    expect.assertions(1);
+    return expect(mdLinks('./test/mock.md', {validate:false, stats:true})).
+      resolves.toStrictEqual(statDefault);
+  })
   it('expected array to object mdLinks to String', () => {
     expect(mdLinksObjectValidate.toString()).toEqual(mdLinksNoOptionString);
   })
   it('expected array to object validate to String', () => {
     expect(mdLinksOptionValidate.toString()).toEqual(mdLinksOptionValidateString);
   })
-  
 });
+
+describe('cli', () => {
+  it('expected object for option --validate', () => {
+    expect(cli(['/usr/local/bin/node', '/usr/local/bin/md-links','./test/mock.md','--validate'],{validate:false,stats:false, path: '/Users/edith/Desktop/bc-laboratoria/CDMX011-md-links'})).toStrictEqual(cliResultValidate);
+  })
+
+  it('expected object for option --stats', () => {
+    expect(cli(['/usr/local/bin/node', '/usr/local/bin/md-links','./test/mock.md','--stats'], {validate:false,stats:false, path: '/Users/edith/Desktop/bc-laboratoria/CDMX011-md-links'})).toStrictEqual(cliResultStats);
+  })
+  
+  
+})
 
 describe('directory', () => {
   it('find md files', () => {
