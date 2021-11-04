@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "license": "MIT",
   "scripts": {
-    "test": "jest --coverage --watch"
+    "test": "jest --coverage"
   },
   "bin": {
     "md-links": "./src/index.js"
