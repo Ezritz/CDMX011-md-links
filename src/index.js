@@ -33,7 +33,7 @@ arrObjValidate.prototype.toString = function toString() {
 }
 
 const mdLinks = (path, options ={validate: false, stats: false}) => {
-  console.log('mdLinks' );
+  // console.log('mdLinks' );
   return new Promise((resolve, rejected) => {
     
     let files = [];
@@ -86,17 +86,17 @@ const mdLinks = (path, options ={validate: false, stats: false}) => {
       resolve(objStatsBroken);
       break
     case options.validate:
-       console.log('entro validate');
+       // console.log('entro validate');
       for (let i = 0; i<resultPairs.length; i++) {
-        console.log('resultPairs[i].link: ',resultPairs[i].link);
+        // console.log('resultPairs[i].link: ',resultPairs[i].link);
         let obj = links.validate(resultPairs[i].link);
         // console.log('robj: ',obj);
         // console.log('obj' , obj)
         let objRes = new objValidate(obj.href,resultPairs[i].text,obj.status,resultPairs[i].file);
-        console.log('validate', objRes);
+        // console.log('validate', objRes);
         arrLinks.push(objRes);
       }
-      console.log(arrLinks);
+      // console.log(arrLinks);
       resolve(new arrObjValidate(arrLinks));
       break
 
@@ -151,11 +151,8 @@ mdLinks(options.path, options)
     return Promise.reject()
   })
   .catch((error) => {
-    console.log('Use command "md-links <path-to-file> [options]')
-    console.log('Use a route <path-to-file> [options]'), error;
-    console.log('ej "md-links <path-to-file> --validate to obtain status links')
-    console.log('ej md-links <path-to-file> --stats to obtain stats about links')
-    console.log('ej md-links <path-to-file> --stats --validate or --validate --stats to obtain stats with total broken links')
+    console.log('Use command md-links <path-to-file> [options]'),error;
+    
   })
 // console.log('args: ',args);
 

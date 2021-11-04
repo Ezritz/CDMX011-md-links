@@ -35,7 +35,7 @@ const expectedLinksOneMd = [
   new index.objValidate('https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Object/toString','google', '', './test/module/carpeta.md/md.md')
 ];
 
-let mdFiles = ['README.md','test/mock.md','test/module/carpeta.md/md.md','test/module/prueba.md', 'test/module/prueba2.md'];
+let mdFiles = ['README.md','readmeLabo.md','test/mock.md','test/module/carpeta.md/md.md','test/module/prueba.md', 'test/module/prueba2.md'];
 
 
 let statDefault = new stats.statsLinks(4,4);
